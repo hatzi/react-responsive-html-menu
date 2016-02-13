@@ -2,9 +2,14 @@
   "name": "react-responsive-menu",
   "version": "0.0.1",
   "description": "A React component which will move list items into a dropdown menu by detecting if it will fit within parent container",
-  "main": "src/index.js",
+  "main": "lib/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "npm run clean && node node_modules/.bin/babel src --out-dir lib",
+    "clean": "node node_modules/rimraf/bin lib/",
+    "lint": "eslint . ./coverage --ext .js --ext .jsx",
+    "pretest": "npm run lint",
+    "test": "cross-env NODE_ENV=test mocha --recursive --require test/setup/setup.js",
+    "test:watch": "npm test -- --watch"
   },
   "keywords": [
     "react",
@@ -17,10 +22,24 @@
   "author": "Theo Hatzi",
   "license": "MIT",
   "devDependencies": {
+    "babel-cli": "^6.5.1",
+    "babel-eslint": "^4.1.7",
     "babel-polyfill": "^6.5.0",
     "babel-preset-es2015": "^6.5.0",
     "babel-preset-react": "^6.5.0",
     "babel-preset-stage-1": "^6.5.0",
-    "babel-register": "^6.5.2"
+    "babel-register": "^6.5.2",
+    "chai": "^3.5.0",
+    "eslint": "^1.10.3",
+    "eslint-loader": "^1.2.1",
+    "eslint-plugin-babel": "^3.1.0",
+    "eslint-plugin-react": "^3.16.1",
+    "jsdom": "^8.0.2",
+    "rimraf": "^2.5.1",
+    "sinon": "^1.17.3"
+  },
+  "dependencies": {
+    "react": "^0.14.7",
+    "react-dom": "^0.14.7"
   }
 }
