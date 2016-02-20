@@ -1,9 +1,7 @@
 import React, {PropTypes, Component} from 'react';
-import ReactDOM from 'react-dom';
 import MenuItem from './ResponsiveMenuItem.jsx';
 import DropDownList from './ResponsiveMenuDropdown.jsx';
 import throttle from 'lodash/throttle';
-import get from 'lodash/get';
 
 export default class ResponsiveMenu extends Component {
     static propTypes = {
@@ -15,6 +13,12 @@ export default class ResponsiveMenu extends Component {
     static defaultProps = {
         className: ''
     };
+
+    static windowWidth = 0;
+
+    static setWindowWidth(width) {
+        ResponsiveMenu.windowWidth = window.innerWidth;
+    }
 
     constructor(props) {
         super(props);
@@ -45,15 +49,25 @@ export default class ResponsiveMenu extends Component {
 
         if (!menu.children.length > 1) return;
 
+        const windowWidth = window.innerWidth;
         const dropMenu = menu.children[menu.children.length - 1];
 
         dropMenu.style.display = '';
         const menuTopPos = this.state.init ? dropMenu.getBoundingClientRect().top : menu.children[0].getBoundingClientRect().top;
         let fittedCount = 0;
+        let childrenToCheck;
 
-        forEach.call(slice.call(menu.children, 0, -1), (child) => child.style.display = 'none');
+        if (ResponsiveMenu.windowWidth < windowWidth) { // When window size has increased
+            childrenToCheck = slice.call(menu.children, visibleCount, -1);
+            fittedCount = visibleCount;
+        } else { // When window size has decreased
+            childrenToCheck = slice.call(menu.children, 0, -1);
+            forEach.call(childrenToCheck, (child) => child.style.display = 'none');
+        }
 
-        every.call(slice.call(menu.children, 0, -1), (child, i) => {
+        ResponsiveMenu.setWindowWidth(windowWidth);
+
+        every.call(childrenToCheck, (child, i) => {
             child.style.display = '';
 
             if (dropMenu.getBoundingClientRect().top !== menuTopPos) {
