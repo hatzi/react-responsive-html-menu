@@ -2,6 +2,7 @@ import React, {PropTypes, Component} from 'react';
 import ReactDOM from 'react-dom';
 import MenuItem from './ResponsiveMenuItem.jsx';
 import DropDownList from './ResponsiveMenuDropdown.jsx';
+import throttle from 'lodash/throttle';
 import get from 'lodash/get';
 
 export default class ResponsiveMenu extends Component {
@@ -29,11 +30,17 @@ export default class ResponsiveMenu extends Component {
     componentDidMount() {
         this.setState({init: false});
         this.setBrowserState();
+        window.addEventListener('resize', this.setBrowserState, false);
 
     }
 
-    setBrowserState() {
+    componentWillUnmount() {
+        window.removeEventListener('resize', this.setBrowserState, false);
+    }
+
+    setBrowserState = throttle(() => {
         const {every, forEach, slice} = Array.prototype;
+        const visibleCount = this.state.visibleCount;
         const menu = this.refs.menu;
 
         if (!menu.children.length > 1) return;
@@ -41,8 +48,10 @@ export default class ResponsiveMenu extends Component {
         const dropMenu = menu.children[menu.children.length - 1];
 
         dropMenu.style.display = '';
-        const menuTopPos = dropMenu.getBoundingClientRect().top;
+        const menuTopPos = this.state.init ? dropMenu.getBoundingClientRect().top : menu.children[0].getBoundingClientRect().top;
         let fittedCount = 0;
+
+        forEach.call(slice.call(menu.children, 0, -1), (child) => child.style.display = 'none');
 
         every.call(slice.call(menu.children, 0, -1), (child, i) => {
             child.style.display = '';
@@ -55,13 +64,13 @@ export default class ResponsiveMenu extends Component {
             return true;
         });
 
-        forEach.call(slice.call(menu.children, 0, fittedCount + 1), (child) => child.style.display = 'none');
+        forEach.call(slice.call(menu.children, visibleCount, fittedCount + 1), (child) => child.style.display = 'none');
 
         this.setState({
             visibleCount: fittedCount
         });
 
-    }
+    }, 500);
 
     render() {
         const {className, dropdownText, list} = this.props;
