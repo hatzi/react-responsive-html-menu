@@ -2,6 +2,7 @@ import React from 'react';
 import TestUtils from 'react-addons-test-utils';
 import ResponsiveMenu from '../src/ResponsiveMenu.jsx';
 import ResponsiveMenuDropDown from '../src/ResponsiveMenuDropdown.jsx';
+import ResponsiveMenuItem from '../src/ResponsiveMenuItem.jsx';
 
 describe(`ResponsiveMenu`, () => {
     let shallowRenderer;
@@ -68,9 +69,63 @@ describe(`ResponsiveMenu`, () => {
         });
 
         it(`should render the DropDownList Component`, () => {
-            expect(renderedTree.props.children).to.deep.eq([
-                <ResponsiveMenuDropDown key="dropdown" list={listProp} dropdownText={moreText} />
-            ]);
+            expect(renderedTree.props.children.pop()).to.deep.eq(
+                <ResponsiveMenuDropDown key="dropdown" list={listProp} dropdownText={moreText} />);
+        });
+    });
+
+    describe(`when passing valid props and the number of visible items is set to 2`, () => {
+        const moreText = 'More';
+        const visibleCount = 2;
+        const listProp = [
+            { link: '/', text: 'Home' },
+            { link: '/about', text: 'About' },
+            { link: '/services', text: 'Services' },
+            { link: '/team', text: 'Meet the Team' },
+            { link: '/careers', text: 'Careers' },
+            { link: '/contact', text: 'Contact' }
+        ];
+
+        describe('and the init state is set to true', () => {
+            before(() => {
+                shallowRenderer = TestUtils.createRenderer();
+                shallowRenderer.render(<ResponsiveMenu list={listProp} dropdownText={moreText} />);
+                shallowRenderer._instance._instance.setState({init: true, visibleCount});
+                renderedTree = shallowRenderer.getRenderOutput();
+            });
+
+            it(`should render the top level items, setting all to be hidden`, () => {
+                for (let i = 0; i < listProp.length - 1; i++) {
+                    expect(renderedTree.props.children[i]).to.deep.eq(
+                        <ResponsiveMenuItem key={i} show={false} {...listProp[i]} />);
+                }
+            });
+
+            it(`should render the DropDownList Component with all the list items`, () => {
+                expect(renderedTree.props.children.pop()).to.deep.eq(
+                    <ResponsiveMenuDropDown key="dropdown" list={listProp} dropdownText={moreText} />);
+            });
+        });
+
+        describe('and the init state is set to true', () => {
+            before(() => {
+                shallowRenderer = TestUtils.createRenderer();
+                shallowRenderer.render(<ResponsiveMenu list={listProp} dropdownText={moreText} />);
+                shallowRenderer._instance._instance.setState({init: false, visibleCount});
+                renderedTree = shallowRenderer.getRenderOutput();
+            });
+
+            it(`should render the top level items, setting all to be hidden`, () => {
+                for (let i = 0; i < listProp.length - 1; i++) {
+                    expect(renderedTree.props.children[i]).to.deep.eq(
+                        <ResponsiveMenuItem key={i} show={i < visibleCount} {...listProp[i]} />);
+                }
+            });
+
+            it(`should render the DropDownList Component with items that are not in the top level list`, () => {
+                expect(renderedTree.props.children.pop()).to.deep.eq(
+                    <ResponsiveMenuDropDown key="dropdown" list={listProp.slice(visibleCount)} dropdownText={moreText} />);
+            });
         });
     });
 });

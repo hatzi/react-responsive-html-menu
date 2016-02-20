@@ -14,8 +14,9 @@ describe(`ResponsiveMenuDropdown`, () => {
             renderedTree = shallowRenderer.getRenderOutput();
         });
 
-        it(`should not render`, () => {
-            expect(renderedTree).to.not.exist;
+        it(`should render with a style prop to display none`, () => {
+            expect(renderedTree).to.exist;
+            expect(renderedTree.props.style).to.deep.eq({display: 'none'});
         });
     });
 
@@ -26,8 +27,9 @@ describe(`ResponsiveMenuDropdown`, () => {
             renderedTree = shallowRenderer.getRenderOutput();
         });
 
-        it(`should not render`, () => {
-            expect(renderedTree).to.not.exist;
+        it(`should render with a style prop to display none`, () => {
+            expect(renderedTree).to.exist;
+            expect(renderedTree.props.style).to.deep.eq({display: 'none'});
         });
     });
 
@@ -38,8 +40,9 @@ describe(`ResponsiveMenuDropdown`, () => {
             renderedTree = shallowRenderer.getRenderOutput();
         });
 
-        it(`should not render`, () => {
-            expect(renderedTree).to.not.exist;
+        it(`should render with a style prop to display none`, () => {
+            expect(renderedTree).to.exist;
+            expect(renderedTree.props.style).to.deep.eq({display: 'none'});
         });
     });
 
@@ -56,8 +59,9 @@ describe(`ResponsiveMenuDropdown`, () => {
             renderedTree = shallowRenderer.getRenderOutput();
         });
 
-        it(`should render`, () => {
+        it(`should render with an empty style prop`, () => {
             expect(renderedTree).to.exist;
+            expect(renderedTree.props.style).to.deep.eq({});
         });
 
         it(`should render component in a <li>`, () => {

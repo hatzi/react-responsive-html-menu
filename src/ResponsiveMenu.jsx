@@ -1,4 +1,5 @@
 import React, {PropTypes, Component} from 'react';
+import ReactDOM from 'react-dom';
 import MenuItem from './ResponsiveMenuItem.jsx';
 import DropDownList from './ResponsiveMenuDropdown.jsx';
 import get from 'lodash/get';
@@ -20,30 +21,74 @@ export default class ResponsiveMenu extends Component {
         const list = props.list;
 
         this.state = {
-            visibleList: [],
-            dropList: list && Array.isArray(list) ? list : []
+            init: true,
+            visibleCount: 0
         };
     }
 
-    componentWillMount() {
-        if (typeof window !== 'undefined' && get(window, 'document.createElement')) this.setBrowserState();
+    componentDidMount() {
+        this.setState({init: false});
+        this.setBrowserState();
+
     }
 
-    setBrowserState() {}
+    setBrowserState() {
+        const {every, forEach, slice} = Array.prototype;
+        const menu = this.refs.menu;
+
+        if (!menu.children.length > 1) return;
+
+        const dropMenu = menu.children[menu.children.length - 1];
+
+        dropMenu.style.display = '';
+        const menuTopPos = dropMenu.getBoundingClientRect().top;
+        let fittedCount = 0;
+
+        every.call(slice.call(menu.children, 0, -1), (child, i) => {
+            child.style.display = '';
+
+            if (dropMenu.getBoundingClientRect().top !== menuTopPos) {
+                return false;
+            }
+
+            fittedCount++;
+            return true;
+        });
+
+        forEach.call(slice.call(menu.children, 0, fittedCount + 1), (child) => child.style.display = 'none');
+
+        this.setState({
+            visibleCount: fittedCount
+        });
+
+    }
 
     render() {
-        const {className, dropdownText} = this.props;
-        const {visibleList, dropList} = this.state;
+        const {className, dropdownText, list} = this.props;
+        const {init, visibleCount} = this.state;
 
-        if (!visibleList.length && !dropList.length) return null;
+        if (!list || !Array.isArray(list) || !list.length) return null;
+
+        const dropList = init ? list : list.slice(visibleCount);
 
         return (
-            <ul className={`react-responsive-menu ${className}`.trim()}>
-                {visibleList.map((item, i) => <MenuItem key={i} {...item} />)
-                    .concat(dropList.length ? <DropDownList
-                        key="dropdown"
-                        list={dropList}
-                        dropdownText={dropdownText} /> : null)}
+            <ul ref="menu" className={`react-responsive-menu ${className}`.trim()}>
+                {list
+                    .map((item, i) => {
+                        const showItem = init ? false : i < visibleCount;
+
+                        return (
+                            <MenuItem
+                                key={i}
+                                show={showItem}
+                                {...item} />);
+                    }).concat(
+                        <DropDownList
+                            key="dropdown"
+                            list={dropList}
+                            dropdownText={dropdownText} />
+                    )
+                }
             </ul>
         );
     }
