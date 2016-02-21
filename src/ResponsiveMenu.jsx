@@ -17,13 +17,11 @@ export default class ResponsiveMenu extends Component {
     static windowWidth = 0;
 
     static setWindowWidth(width) {
-        ResponsiveMenu.windowWidth = window.innerWidth;
+        ResponsiveMenu.windowWidth = width;
     }
 
     constructor(props) {
         super(props);
-
-        const list = props.list;
 
         this.state = {
             init: true,
@@ -35,7 +33,6 @@ export default class ResponsiveMenu extends Component {
         this.setState({init: false});
         this.setBrowserState();
         window.addEventListener('resize', this.setBrowserState, false);
-
     }
 
     componentWillUnmount() {
@@ -67,7 +64,7 @@ export default class ResponsiveMenu extends Component {
 
         ResponsiveMenu.setWindowWidth(windowWidth);
 
-        every.call(childrenToCheck, (child, i) => {
+        every.call(childrenToCheck, (child) => {
             child.style.display = '';
 
             if (dropMenu.getBoundingClientRect().top !== menuTopPos) {
@@ -83,7 +80,6 @@ export default class ResponsiveMenu extends Component {
         this.setState({
             visibleCount: fittedCount
         });
-
     }, 500);
 
     render() {
