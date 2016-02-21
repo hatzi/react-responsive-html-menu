@@ -74,6 +74,25 @@ describe(`ResponsiveMenu`, () => {
         });
     });
 
+    describe(`when passing leaving out the dropdownText prop`, () => {
+        const listProp = [
+            { link: '/', text: 'Home' },
+            { link: '/about', text: 'About' }
+        ];
+
+        before(() => {
+            shallowRenderer = TestUtils.createRenderer();
+            shallowRenderer.render(<ResponsiveMenu className="class-name" list={listProp} />);
+            renderedTree = shallowRenderer.getRenderOutput();
+        });
+
+        const expectedTextVal = 'More';
+        it(`should render the DropDownList Component passing '${expectedTextVal}' as the value for the dropDownText prop`, () => {
+            expect(renderedTree.props.children.pop()).to.deep.eq(
+                <ResponsiveMenuDropDown key="dropdown" list={listProp} dropdownText={expectedTextVal} />);
+        });
+    });
+
     describe(`when passing valid props and the number of visible items is set to 2`, () => {
         const moreText = 'More';
         const visibleCount = 2;

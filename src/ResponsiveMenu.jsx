@@ -11,7 +11,8 @@ export default class ResponsiveMenu extends Component {
     };
 
     static defaultProps = {
-        className: ''
+        className: '',
+        dropdownText: 'More'
     };
 
     static windowWidth = 0;
