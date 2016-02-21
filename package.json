@@ -7,6 +7,7 @@
     "build": "npm run clean && node node_modules/.bin/babel src --out-dir lib",
     "clean": "node node_modules/rimraf/bin lib/",
     "lint": "eslint . ./coverage --ext .js --ext .jsx",
+    "prepublish": "npm run lint && npm run test && npm run build",
     "test": "cross-env NODE_ENV=test mocha --recursive --require test/setup/setup.js",
     "test:watch": "npm test -- --watch --watch-extensions jsx"
   },
