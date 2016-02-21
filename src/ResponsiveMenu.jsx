@@ -40,31 +40,30 @@ export default class ResponsiveMenu extends Component {
     }
 
     setBrowserState = throttle(() => {
-        const {every, forEach, slice} = Array.prototype;
         const visibleCount = this.state.visibleCount;
         const menu = this.refs.menu;
 
         if (!menu.children.length > 1) return;
 
-        const windowWidth = window.innerWidth;
-        const dropMenu = menu.children[menu.children.length - 1];
+        const menuChildren = Object.keys(menu.children).map(key => menu.children[key]);
+        const dropMenu = menuChildren[menuChildren.length - 1];
 
         dropMenu.style.display = '';
-        const menuTopPos = this.state.init ? dropMenu.getBoundingClientRect().top : menu.children[0].getBoundingClientRect().top;
+        const menuTopPos = this.state.init ? dropMenu.getBoundingClientRect().top : menuChildren[0].getBoundingClientRect().top;
         let fittedCount = 0;
         let childrenToCheck;
 
-        if (ResponsiveMenu.windowWidth < windowWidth) { // When window size has increased
-            childrenToCheck = slice.call(menu.children, visibleCount, -1);
+        if (ResponsiveMenu.windowWidth < window.innerWidth) { // When window size has increased
+            childrenToCheck = menuChildren.slice(visibleCount, -1);
             fittedCount = visibleCount;
         } else { // When window size has decreased
-            childrenToCheck = slice.call(menu.children, 0, -1);
-            forEach.call(childrenToCheck, (child) => child.style.display = 'none');
+            childrenToCheck = menuChildren.slice(0, -1);
+            childrenToCheck.forEach((child) => child.style.display = 'none');
         }
 
-        ResponsiveMenu.setWindowWidth(windowWidth);
+        ResponsiveMenu.setWindowWidth(window.innerWidth);
 
-        every.call(childrenToCheck, (child) => {
+        childrenToCheck.every((child) => {
             child.style.display = '';
 
             if (dropMenu.getBoundingClientRect().top !== menuTopPos) {
@@ -75,7 +74,7 @@ export default class ResponsiveMenu extends Component {
             return true;
         });
 
-        forEach.call(slice.call(menu.children, visibleCount, fittedCount + 1), (child) => child.style.display = 'none');
+        menuChildren.slice(visibleCount, fittedCount + 1).forEach((child) => child.style.display = 'none');
 
         this.setState({
             visibleCount: fittedCount
