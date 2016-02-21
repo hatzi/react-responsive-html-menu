@@ -1,6 +1,6 @@
 {
   "name": "react-responsive-html-menu",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "A React component which will move list items into a dropdown menu by detecting if it will fit within parent container",
   "main": "lib/index.js",
   "scripts": {
