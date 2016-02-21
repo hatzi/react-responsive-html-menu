@@ -36,7 +36,6 @@
     "eslint-loader": "^1.2.1",
     "eslint-plugin-babel": "^3.1.0",
     "eslint-plugin-react": "^3.16.1",
-    "jsdom": "^8.0.2",
     "react-addons-test-utils": "^0.14.7",
     "rimraf": "^2.5.1",
     "sinon": "^1.17.3",
